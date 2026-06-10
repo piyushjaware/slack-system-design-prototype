@@ -35,5 +35,37 @@ services:
     volumes:
       - ./msg_service:/app
 
+  alice:
+    build:
+      context: ./client_app
+      dockerfile: Dockerfile
+    container_name: alice_container
+    ports:
+      - "7001:5000"
+    environment:
+      SERVICE_URL: http://msg_service:5000
+      CLIENT_NAME: alice
+      USER_ID: 1
+    depends_on:
+      - msg_service
+    volumes:
+      - ./client_app:/app
+
+  bob:
+    build:
+      context: ./client_app
+      dockerfile: Dockerfile
+    container_name: bob_container
+    ports:
+      - "7002:5000"
+    environment:
+      SERVICE_URL: http://msg_service:5000
+      CLIENT_NAME: bob
+      USER_ID: 2
+    depends_on:
+      - msg_service
+    volumes:
+      - ./client_app:/app
+
 volumes:
   mysql_data:

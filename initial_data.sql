@@ -1,40 +1,106 @@
--- Tables
-
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
-    id    INT AUTO_INCREMENT PRIMARY KEY,
-    name  VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE channels
+    id
+    INT
+    AUTO_INCREMENT
+    PRIMARY
+    KEY,
+    name
+    VARCHAR
 (
-    id   INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    type VARCHAR(50)  NOT NULL
-);
-
-CREATE TABLE msgs
+    100
+) NOT NULL,
+    email VARCHAR
 (
-    id         INT AUTO_INCREMENT PRIMARY KEY,
-    text       TEXT NOT NULL,
-    channel_id INT  NOT NULL,
-    sender_id  INT  NOT NULL,
-    FOREIGN KEY (channel_id) REFERENCES channels (id),
-    FOREIGN KEY (sender_id) REFERENCES users (id)
-);
+    255
+) NOT NULL
+    );
 
-CREATE TABLE channel_membership
+CREATE TABLE IF NOT EXISTS channels
 (
-    user_id    INT NOT NULL,
-    channel_id INT NOT NULL,
-    PRIMARY KEY (user_id, channel_id),
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (channel_id) REFERENCES channels (id)
-);
+    id
+    INT
+    AUTO_INCREMENT
+    PRIMARY
+    KEY,
+    name
+    VARCHAR
+(
+    100
+) NOT NULL,
+    type VARCHAR
+(
+    50
+) NOT NULL
+    );
 
+CREATE TABLE IF NOT EXISTS msgs
+(
+    id
+    INT
+    AUTO_INCREMENT
+    PRIMARY
+    KEY,
+    text
+    TEXT
+    NOT
+    NULL,
+    channel_id
+    INT
+    NOT
+    NULL,
+    sender_id
+    INT
+    NOT
+    NULL,
+    FOREIGN
+    KEY
+(
+    channel_id
+) REFERENCES channels
+(
+    id
+),
+    FOREIGN KEY
+(
+    sender_id
+) REFERENCES users
+(
+    id
+)
+    );
 
--- Initial Data ---
+CREATE TABLE IF NOT EXISTS channel_membership
+(
+    user_id
+    INT
+    NOT
+    NULL,
+    channel_id
+    INT
+    NOT
+    NULL,
+    PRIMARY
+    KEY
+(
+    user_id,
+    channel_id
+),
+    FOREIGN KEY
+(
+    user_id
+) REFERENCES users
+(
+    id
+),
+    FOREIGN KEY
+(
+    channel_id
+) REFERENCES channels
+(
+    id
+)
+    );
 
 INSERT INTO users (name, email)
 VALUES ('Alice', 'alice@example.com'),
@@ -45,14 +111,14 @@ INSERT INTO channels (name, type)
 VALUES ('alice,bob', 'dm'),
        ('general', 'channel');
 
-
--- Link Alice (1) and Bob (2) to the 'alice,bob' channel (1)
 INSERT INTO channel_membership (user_id, channel_id)
 VALUES (1, 1),
-       (2, 1);
-
--- Link Alice (1), Bob (2), and Charlie (3) to the 'general' channel (2)
-INSERT INTO channel_membership (user_id, channel_id)
-VALUES (1, 2),
+       (2, 1),
+       (1, 2),
        (2, 2),
        (3, 2);
+
+INSERT INTO msgs (text, channel_id, sender_id)
+VALUES ('Hi Bob!', 1, 1),
+       ('Hey Alice, nice to meet you here.', 1, 2),
+       ('Welcome everyone to #general', 2, 3)
