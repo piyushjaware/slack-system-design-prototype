@@ -1,7 +1,5 @@
-
 Alice: http://localhost:7001/
 Bob: http://localhost:7002/
-
 
 Sample Request
 
@@ -21,10 +19,16 @@ curl -X POST http://localhost:5001/channels/1/messages \
 
 Get connected users
 curl http://localhost:5002/users  
+
+Test ws send message
+curl -X POST http://localhost:5002/send \
+  -H "Content-Type: application/json" \
+  -d '{"to_user_id": 1, "message": "Hello Alice!"}'
+  
 ```
 
-
 How to run
+
 ```html
 make install_reqs
 make run

@@ -19,21 +19,21 @@ def users():
     return jsonify({"connected_users": list(user_to_sid.keys())})
 
 
-# @app.post("/send")
-# def send_to_user_http():
-#     payload = request.get_json(silent=True) or {}
-#     to_user_id = str(payload.get("to_user_id", "")).strip()
-#     message = str(payload.get("message", "")).strip()
-#
-#     if not to_user_id or not message:
-#         return jsonify({"error": "to_user_id and message are required"}), 400
-#
-#     sid = user_to_sid.get(to_user_id)
-#     if not sid:
-#         return jsonify({"error": f"user {to_user_id} is not connected"}), 404
-#
-#     socketio.emit("message", {"to_user_id": to_user_id, "message": message}, to=sid)
-#     return jsonify({"status": "sent"})
+@app.post("/send")
+def send_to_user_http():
+    payload = request.get_json(silent=True) or {}
+    to_user_id = str(payload.get("to_user_id", "")).strip()
+    message = str(payload.get("message", "")).strip()
+
+    if not to_user_id or not message:
+        return jsonify({"error": "to_user_id and message are required"}), 400
+
+    sid = user_to_sid.get(to_user_id)
+    if not sid:
+        return jsonify({"error": f"user {to_user_id} is not connected"}), 404
+
+    socketio.emit("message", {"to_user_id": to_user_id, "message": message}, to=sid)
+    return jsonify({"status": "sent"})
 
 
 @socketio.on("connect")
