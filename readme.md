@@ -17,5 +17,15 @@ Post a message to channel 1
 curl -X POST http://localhost:5001/channels/1/messages \
   -H "Content-Type: application/json" \
   -d '{"text": "Hey everyone!", "sender_id": 1}'
-  
+
+
+Get connected users
+curl http://localhost:5002/users  
+```
+
+
+How to run
+```html
+make install_reqs
+make run
 ```

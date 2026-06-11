@@ -18,6 +18,13 @@ mysql_cli:
 	docker exec -it mysql_container mysql -u root -proot
 
 
+install_reqs:
+	pip install -r msg_service/requirements.txt
+	pip install -r ws_service/requirements.txt
+	pip install -r client_app/requirements.txt
+	#pip install -r connect_service/requirements.txt
+
+
 
 make run:
 	docker compose down -v

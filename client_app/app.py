@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 SERVICE_URL = os.getenv("SERVICE_URL")
 USER_ID = os.getenv("USER_ID")
+USER_NAME = os.getenv("USER_NAME")
 
 
 def fetch_channels():
@@ -36,6 +37,7 @@ def home():
         "index.html",
         channels=channels,
         user_id=USER_ID,
+        user_name=USER_NAME,
         error=error,
     )
 

@@ -1,8 +1,12 @@
 import os
 from flask import Flask, jsonify
 import mysql.connector
+import redis
 
 app = Flask(__name__)
+
+def init_redis_pub_sub():
+    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 
 def get_db_connection():
