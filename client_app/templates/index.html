@@ -73,22 +73,24 @@
         }
     </style>
 </head>
-<body>
+<body data-user-id="{{ user_id }}">
 <h1>User {{ user_name }} Channels</h1>
 <div class="subtitle">User ID: {{ user_id }}</div>
 {% if error %}
 <div class="error">{{ error }}</div>
 {% endif %}
 {% for channel in channels %}
-<div class="channel">
+<div class="channel" data-channel-id="{{ channel.id }}">
     <h2>#{{ channel.name }}</h2>
-    {% if channel.messages %}
-    {% for message in channel.messages %}
-    <div class="msg">{{ message.text }}</div>
-    {% endfor %}
-    {% else %}
-    <div class="empty">No messages yet.</div>
-    {% endif %}
+    <div class="messages">
+        {% if channel.messages %}
+        {% for message in channel.messages %}
+        <div class="msg">{{ message.text }}</div>
+        {% endfor %}
+        {% else %}
+        <div class="empty">No messages yet.</div>
+        {% endif %}
+    </div>
     <form class="composer" method="post" action="/channels/{{ channel.id }}/send">
         <input type="text" name="text" placeholder="Type a message..." required/>
         <button type="submit">Send</button>
@@ -100,28 +102,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
         integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
         crossorigin="anonymous"></script>
-<script>
-    var socket = io("http://localhost:5002");
-
-    socket.on("connect", function () {
-        console.log("Connected to server!");
-        socket.emit("register", {user_id: '{{user_id}}'});
-    });
-
-    // 5. Listen for the server's confirmation response
-    socket.on("registered", function (response) {
-        console.log("Successfully registered on server:", response);
-    });
-
-    socket.on("message", function (data) {
-        console.log("Message received:", data);
-    })
-
-    // 6. Listen for validation errors
-    socket.on("error", function (err) {
-        console.error("Error:", err.error);
-    });
-</script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 
 </body>

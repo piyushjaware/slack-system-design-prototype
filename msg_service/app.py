@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, jsonify
 import mysql.connector
@@ -5,8 +6,11 @@ import redis
 
 app = Flask(__name__)
 
-def init_redis_pub_sub():
-    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+redis_client = redis.Redis(
+    host=os.getenv('REDIS_HOST', 'localhost'),
+    port=int(os.getenv('REDIS_PORT', '6379')),
+    decode_responses=True
+)
 
 
 def get_db_connection():
@@ -67,9 +71,15 @@ def send_message(channel_id):
     #   "sender_id": 1
     # }
 
+    # save message to db
     query = "INSERT INTO msgs (text, channel_id, sender_id) VALUES (%s, %s, %s)"
     cursor.execute(query, (data['text'], channel_id, data['sender_id']))
 
+    # publish the message to redis
+    msg = json.dumps({'msg': data['text'], 'sender_id': data['sender_id']})
+    redis_client.publish(channel_id, msg)
+
+    print(f"Message sent to channel {channel_id}: {data['text']}")
     conn.commit()
     cursor.close()
     conn.close()

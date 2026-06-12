@@ -29,6 +29,8 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: testdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       mysql:
         condition: service_healthy
@@ -74,10 +76,20 @@ services:
       context: ./ws_service
       dockerfile: Dockerfile
     container_name: ws_service_container
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "5002:5000"
     volumes:
       - ./ws_service:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   redis:
     image: redis:7-alpine
