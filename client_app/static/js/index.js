@@ -1,7 +1,8 @@
 const userId = document.body.dataset.userId;
+const userName = document.body.dataset.userName;
 const socket = io("http://localhost:5002");
 
-function appendMessageToChannel(channelId, messageText) {
+function appendMessageToChannel(channelId, senderName, messageText) {
     const channelEl = document.querySelector(`.channel[data-channel-id="${channelId}"]`);
     if (!channelEl) {
         return;
@@ -17,9 +18,19 @@ function appendMessageToChannel(channelId, messageText) {
         emptyEl.remove();
     }
 
+    const displaySenderName = senderName;
     const msgEl = document.createElement("div");
     msgEl.className = "msg";
-    msgEl.textContent = messageText;
+    const senderEl = document.createElement("span");
+    senderEl.className = "msg-sender";
+    senderEl.textContent = displaySenderName;
+
+    const textEl = document.createElement("span");
+    textEl.className = "msg-text";
+    textEl.textContent = messageText;
+
+    msgEl.appendChild(senderEl);
+    msgEl.appendChild(textEl);
     messagesEl.appendChild(msgEl);
 }
 
@@ -34,7 +45,7 @@ socket.on("registered", function (response) {
 
 socket.on("message", function (data) {
     console.log("Message received:", data);
-    appendMessageToChannel(data.channel_id, data.msg);
+    appendMessageToChannel(data.channel_id, data.sender_name, data.msg);
 });
 
 socket.on("error", function (err) {
@@ -68,7 +79,7 @@ document.querySelectorAll("form.composer").forEach(function (form) {
         const channelEl = form.closest(".channel");
         const channelId = channelEl ? channelEl.dataset.channelId : null;
         if (channelId) {
-            appendMessageToChannel(channelId, text);
+            appendMessageToChannel(channelId, userName, text);
         }
         input.value = "";
     });

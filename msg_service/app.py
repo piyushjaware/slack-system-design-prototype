@@ -50,7 +50,12 @@ def get_user_channels(user_id):
 def get_channel_messages(channel_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = "SELECT * FROM msgs WHERE channel_id = %s"
+    query = """
+            SELECT m.*, u.name AS sender_name
+            FROM msgs m
+                     JOIN users u ON m.sender_id = u.id
+            WHERE m.channel_id = %s
+            """
     cursor.execute(query, (channel_id,))
     messages = cursor.fetchall()
     cursor.close()
@@ -75,15 +80,24 @@ def send_message(channel_id):
     query = "INSERT INTO msgs (text, channel_id, sender_id) VALUES (%s, %s, %s)"
     cursor.execute(query, (data['text'], channel_id, data['sender_id']))
 
+    sender_query = "SELECT name FROM users WHERE id = %s"
+    cursor.execute(sender_query, (data['sender_id'],))
+    sender = cursor.fetchone()
+    sender_name = sender[0] if sender else None
+
     # publish the message to redis
-    msg = json.dumps({'msg': data['text'], 'sender_id': data['sender_id']})
+    msg = json.dumps({
+        'msg': data['text'],
+        'sender_id': data['sender_id'],
+        'sender_name': sender_name,
+    })
     redis_client.publish(channel_id, msg)
 
     print(f"Message sent to channel {channel_id}: {data['text']}")
     conn.commit()
     cursor.close()
     conn.close()
-    return jsonify({'status': 'sent'}), 200
+    return jsonify({'status': 'sent', 'message': json.loads(msg)}), 200
 
 
 @app.route('/health', methods=['GET'])
