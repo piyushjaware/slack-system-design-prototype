@@ -1,7 +1,19 @@
-Alice: http://localhost:7001/
-Bob: http://localhost:7002/
+## Services overview
 
-Sample Request
+- **client_app**: Web UI for Alice and Bob. It loads channels/messages and sends chat messages.
+- **msg_service**: REST API for channels and messages backed by MySQL.
+- **connect_service**: Returns the websocket URL for a user.
+- **ws_service_alice**: Websocket server serving Alice.
+- **ws_service_bob**: Websocket server serving Bob.
+- **mysql**: Stores users, channels, memberships, and messages.
+- **redis**: Broadcast layer used by the websocket services.
+
+Alice's Client App: http://localhost:7001/
+Bob's Client App: http://localhost:7002/
+
+
+---
+Sample Test Requests
 
 ```
 
@@ -27,7 +39,8 @@ curl -X POST http://localhost:5002/send \
   
 ```
 
-How to run
+---
+How to run locally?
 
 ```html
 make install_reqs
