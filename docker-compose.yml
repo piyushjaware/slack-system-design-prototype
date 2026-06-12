@@ -50,6 +50,7 @@ services:
       USER_ID: 1
       USER_NAME: Alice
     depends_on:
+      - connect_service
       - msg_service
     volumes:
       - ./client_app:/app
@@ -67,15 +68,46 @@ services:
       USER_ID: 2
       USER_NAME: Bob
     depends_on:
+      - connect_service
       - msg_service
     volumes:
       - ./client_app:/app
 
-  ws_service:
+  connect_service:
+    build:
+      context: ./connect_service
+      dockerfile: Dockerfile
+    container_name: connect_service_container
+    ports:
+      - "5004:5000"
+    volumes:
+      - ./connect_service:/app
+
+  ws_service_bob:
     build:
       context: ./ws_service
       dockerfile: Dockerfile
-    container_name: ws_service_container
+    container_name: ws_service_bob_container
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "5003:5000"
+    volumes:
+      - ./ws_service:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  ws_service_alice:
+    build:
+      context: ./ws_service
+      dockerfile: Dockerfile
+    container_name: ws_service_alice_container
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: root

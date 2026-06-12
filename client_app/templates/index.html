@@ -84,7 +84,7 @@
         }
     </style>
 </head>
-<body data-user-id="{{ user_id }}" data-user-name="{{ user_name }}">
+<body data-user-id="{{ user_id }}" data-user-name="{{ user_name }}" data-socket-url="{{ socket_url }}">
 <h1>{{ user_name }}</h1>
 <div class="subtitle">User ID: {{ user_id }}</div>
 {% if error %}
@@ -97,7 +97,7 @@
         {% if channel.messages %}
         {% for message in channel.messages %}
         <div class="msg">
-            <span class="msg-sender">{{ message.sender_name}}</span>
+            <span class="msg-sender">{{ message.sender_name }}</span>
             <span class="msg-text">{{ message.text }}</span>
         </div>
         {% endfor %}

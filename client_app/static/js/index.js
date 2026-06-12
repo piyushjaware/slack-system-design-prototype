@@ -1,6 +1,10 @@
 const userId = document.body.dataset.userId;
 const userName = document.body.dataset.userName;
-const socket = io("http://localhost:5002");
+const socketUrl = document.body.dataset.socketUrl;
+if (!socketUrl) {
+    throw new Error("Socket URL is required");
+}
+const socket = io(socketUrl);
 
 function appendMessageToChannel(channelId, senderName, messageText) {
     const channelEl = document.querySelector(`.channel[data-channel-id="${channelId}"]`);
